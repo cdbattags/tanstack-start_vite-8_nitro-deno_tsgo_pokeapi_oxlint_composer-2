@@ -4,6 +4,7 @@
     "build": "pnpm run build:deno-deploy",
     "runtime": {
       "type": "dynamic",
+      "cwd": ".output",
       "entrypoint": ".output/server/index.ts"
     }
   }
