@@ -5,7 +5,7 @@
     "runtime": {
       "type": "dynamic",
       "cwd": ".output",
-      "entrypoint": ".output/server/index.ts"
+      "entrypoint": "server/index.ts"
     }
   }
 }

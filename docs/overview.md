@@ -37,8 +37,10 @@ organizations should use hosted GitHub builds or the **`deno deploy`** CLI.
 ### New Deno Deploy (recommended for this app)
 
 Root **`deno.json`** defines **`deploy.install`**, **`deploy.build`**
-(`pnpm run build:deno-deploy`), and **`deploy.runtime`**: dynamic entrypoint
-**`.output/server/index.ts`** plus **`cwd`: `.output`**. That working directory is
+(`pnpm run build:deno-deploy`), and **`deploy.runtime`**: **`cwd`: `.output`** plus
+**`entrypoint`: `server/index.ts`** (relative to that **`cwd`**; do not repeat the
+**`.output`** prefix or Deploy looks for **`.output/.output/server/index.ts`**). That
+working directory is
 required so Nitro’s static handler can open **`./public/assets/*`** (Vite JS/CSS).
 If **`cwd`** stays the repo root, only repo **`public/`** files load and **`/assets/*`**
 returns **500**. Link the repo under **Deploy from GitHub**; pushes build on **Deno’s
