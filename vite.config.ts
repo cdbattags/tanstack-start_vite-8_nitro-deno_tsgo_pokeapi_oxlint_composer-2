@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import { devtools } from '@tanstack/devtools-vite'
+import devtoolsJson from 'vite-plugin-devtools-json'
 
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 
@@ -12,7 +12,7 @@ const config = defineConfig({
     tsconfigPaths: true,
   },
   plugins: [
-    devtools(),
+    devtoolsJson(),
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
     tanstackStart(),

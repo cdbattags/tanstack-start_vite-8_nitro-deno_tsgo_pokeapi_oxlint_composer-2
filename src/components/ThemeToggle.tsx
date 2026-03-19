@@ -1,4 +1,6 @@
+import { Laptop, Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { THEME_COLOR_DARK, THEME_COLOR_LIGHT } from '../site'
 
 type ThemeMode = 'light' | 'dark' | 'auto'
 
@@ -15,6 +17,16 @@ function getInitialMode(): ThemeMode {
   return 'auto'
 }
 
+function syncThemeColorMeta(resolved: 'light' | 'dark') {
+  let meta = document.querySelector('meta[name="theme-color"]')
+  if (!meta) {
+    meta = document.createElement('meta')
+    meta.setAttribute('name', 'theme-color')
+    document.head.appendChild(meta)
+  }
+  meta.setAttribute('content', resolved === 'dark' ? THEME_COLOR_DARK : THEME_COLOR_LIGHT)
+}
+
 function applyThemeMode(mode: ThemeMode) {
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   const resolved = mode === 'auto' ? (prefersDark ? 'dark' : 'light') : mode
@@ -29,6 +41,7 @@ function applyThemeMode(mode: ThemeMode) {
   }
 
   document.documentElement.style.colorScheme = resolved
+  syncThemeColorMeta(resolved)
 }
 
 export default function ThemeToggle() {
@@ -64,8 +77,12 @@ export default function ThemeToggle() {
 
   const label =
     mode === 'auto'
-      ? 'Theme mode: auto (system). Click to switch to light mode.'
-      : `Theme mode: ${mode}. Click to switch mode.`
+      ? 'Theme: match system. Click for light mode.'
+      : mode === 'dark'
+        ? 'Theme: dark. Click for system match.'
+        : 'Theme: light. Click for dark mode.'
+
+  const Icon = mode === 'auto' ? Laptop : mode === 'dark' ? Moon : Sun
 
   return (
     <button
@@ -73,9 +90,10 @@ export default function ThemeToggle() {
       onClick={toggleMode}
       aria-label={label}
       title={label}
-      className="rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 text-sm font-semibold text-[var(--sea-ink)] shadow-[0_8px_22px_rgba(30,90,72,0.08)] transition hover:-translate-y-0.5"
+      className="theme-toggle-btn inline-flex items-center gap-2 rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-2 text-xs font-bold text-[var(--sea-ink)] shadow-[0_6px_18px_rgba(15,45,51,0.06)] transition hover:-translate-y-0.5 sm:text-sm"
     >
-      {mode === 'auto' ? 'Auto' : mode === 'dark' ? 'Dark' : 'Light'}
+      <Icon className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
+      <span className="tabular-nums tracking-wide">{mode === 'auto' ? 'Auto' : mode === 'dark' ? 'Dark' : 'Light'}</span>
     </button>
   )
 }

@@ -88,22 +88,38 @@ async function getIndex(): Promise<PokeSearchHit[]> {
   return hits
 }
 
+export async function listPokeResourceTypes(): Promise<string[]> {
+  const index = await getIndex()
+  const names = new Set(index.map((row) => row.resource))
+  return [...names].toSorted((a, b) => a.localeCompare(b))
+}
+
+type PokeSearchOptions = {
+  /** When set, only rows for this PokéAPI list key (e.g. pokemon, berry) match. */
+  resource?: string
+}
+
 /**
  * Full-text style filter over the cached PokéAPI index (server-only).
  */
 export async function runPokeSearch(
   q: string,
   limit: number,
+  opts?: PokeSearchOptions,
 ): Promise<PokeSearchResult> {
   const needle = q.trim().toLowerCase()
   if (!needle) {
     return { hits: [], indexSize: 0, stale: false }
   }
 
+  const filterResource = opts?.resource?.trim()
   const index = await getIndex()
   const hits: PokeSearchHit[] = []
   for (const row of index) {
     if (hits.length >= limit) break
+    if (filterResource && row.resource !== filterResource) {
+      continue
+    }
     const label = row.label.toLowerCase()
     const resource = row.resource.toLowerCase()
     const id = idFromPokeUrl(row.url) ?? ''
