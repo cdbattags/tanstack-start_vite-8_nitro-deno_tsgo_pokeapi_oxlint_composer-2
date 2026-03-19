@@ -23,6 +23,7 @@ coverage/
 # Environment and secrets (track templates with git add -f if needed)
 .env*
 !.env.example
+!.envrc
 
 # Local / machine-specific
 *.local

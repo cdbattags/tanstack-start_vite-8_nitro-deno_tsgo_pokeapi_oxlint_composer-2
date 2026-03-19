@@ -12,6 +12,7 @@
     "build:node": "NITRO_PRESET=node-server vite build",
     "preview": "vite preview",
     "start:deno": "deno run --allow-net --allow-read --allow-env .output/server/index.mjs",
+    "start:deno:deploy": "sh -c 'cd .output && exec deno run --allow-net --allow-read --allow-env server/index.ts'",
     "typecheck": "tsgo --noEmit",
     "typecheck:tsc": "tsc --noEmit",
     "lint": "oxlint .",

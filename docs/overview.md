@@ -62,6 +62,16 @@ project with [access tokens][deno-tokens] or GitHub OIDC. See
 [deployctl-doc]: https://deno.com/deploy/docs/deployctl
 [deployctl-gh]: https://github.com/denoland/deployctl#readme
 
+# Nix
+
+Optional **`flake.nix`** (input **`nixos-unstable`**, see **`flake.lock`**) defines a **devShell**
+with **Node 22**, **pnpm**, and **Deno**. Use **`nix develop`** or **direnv** with **`.envrc`**
+(`use flake`). That matches what Cursor’s non-interactive shell can bootstrap (see
+project **direnv** rules).
+
+After **`pnpm run build:deno-deploy`**, run the Nitro **`deno_deploy`** server with
+**`pnpm run start:deno:deploy`** so **`cwd`** is **`.output`** (static **`/assets/*`** paths).
+
 # Typechecking
 
 This repo uses **`tsgo`** ([`@typescript/native-preview`](https://www.npmjs.com/package/@typescript/native-preview)), the TypeScript native (Go-based) compiler preview, via `pnpm typecheck`. Vite and editors still rely on the regular **`typescript`** package; use `pnpm typecheck:tsc` if you need the classic Node `tsc` binary.
