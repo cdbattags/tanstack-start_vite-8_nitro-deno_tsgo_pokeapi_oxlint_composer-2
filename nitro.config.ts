@@ -12,5 +12,17 @@ export default defineNitroConfig({
       route: '/api/trpc/**',
       handler: './routes/api/trpc/[...path].ts',
     },
+    {
+      route: '/robots.txt',
+      handler: './routes/robots.txt.ts',
+    },
+    {
+      route: '/sitemap.xml',
+      handler: './routes/sitemap.xml.ts',
+    },
+    {
+      route: '/llms.txt',
+      handler: './routes/llms.txt.ts',
+    },
   ],
 })

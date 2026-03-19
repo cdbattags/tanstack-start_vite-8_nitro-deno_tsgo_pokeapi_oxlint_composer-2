@@ -4,6 +4,12 @@ import { FileJson, Link2, Loader2, Sparkles, Star } from 'lucide-react'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { trpc } from '../integrations/trpc/react'
 import { pokemonDetailSlugFromHit } from '../lib/pokemon-routes'
+import {
+  APP_DESCRIPTION,
+  APP_TITLE,
+  absoluteUrl,
+  getSiteUrl,
+} from '../site'
 
 const RECENTS_KEY = 'pokeapi-search-recents'
 const RECENTS_MAX = 8
@@ -18,6 +24,23 @@ export const Route = createFileRoute('/')({
   validateSearch: (raw: Record<string, unknown>) => ({
     q: typeof raw.q === 'string' ? raw.q.trim().slice(0, 120) : '',
     resource: typeof raw.resource === 'string' ? raw.resource.trim().slice(0, 64) : '',
+  }),
+  head: () => ({
+    meta: [
+      { property: 'og:url', content: absoluteUrl('/') },
+      {
+        'script:ld+json': {
+          '@context': 'https://schema.org',
+          '@type': 'WebApplication',
+          name: APP_TITLE,
+          url: getSiteUrl(),
+          description: APP_DESCRIPTION,
+          applicationCategory: 'UtilitiesApplication',
+          operatingSystem: 'Web',
+        },
+      },
+    ],
+    links: [{ rel: 'canonical', href: absoluteUrl('/') }],
   }),
   component: PokeSearchHome,
 })

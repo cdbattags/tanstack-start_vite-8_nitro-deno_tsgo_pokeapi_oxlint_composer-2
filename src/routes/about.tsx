@@ -1,7 +1,23 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { INDEX_SEARCH_DEFAULT, SOURCE_REPO_URL } from '../site'
+import {
+  ABOUT_DESCRIPTION,
+  APP_TITLE,
+  INDEX_SEARCH_DEFAULT,
+  SOURCE_REPO_URL,
+  absoluteUrl,
+} from '../site'
 
 export const Route = createFileRoute('/about')({
+  head: () => ({
+    meta: [
+      { title: `About · ${APP_TITLE}` },
+      { name: 'description', content: ABOUT_DESCRIPTION },
+      { property: 'og:title', content: `About · ${APP_TITLE}` },
+      { property: 'og:description', content: ABOUT_DESCRIPTION },
+      { property: 'og:url', content: absoluteUrl('/about') },
+    ],
+    links: [{ rel: 'canonical', href: absoluteUrl('/about') }],
+  }),
   component: About,
 })
 

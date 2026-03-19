@@ -3,7 +3,7 @@ import { isTRPCClientError, TRPCClientError } from '@trpc/client'
 import { ExternalLink, ImageOff } from 'lucide-react'
 import { useMemo, useState, type CSSProperties } from 'react'
 import { trpc } from '../integrations/trpc/react'
-import { APP_TITLE } from '../site'
+import { APP_NAME, APP_TITLE, absoluteUrl, getSiteUrl } from '../site'
 
 const TYPE_HEX: Record<string, string> = {
   normal: '#a8a878',
@@ -43,18 +43,60 @@ function formatStatName(raw: string): string {
 }
 
 export const Route = createFileRoute('/pokemon/$slug')({
-  head: ({ params }) => {
+  head: async ({ params }) => {
     const slug = params.slug
     const label = slug.replace(/-/g, ' ')
     const title = label.length ? label.slice(0, 1).toUpperCase() + label.slice(1) : slug
+    const fallbackDesc = `Sprites, types, stats, and Pokédex flavor text for ${title} from the public PokéAPI.`
+    let description = fallbackDesc
+    let ogImage: string | undefined
+    if (import.meta.env.SSR) {
+      const { fetchPokemonDetail } = await import('../server/pokemon-detail')
+      const detail = await fetchPokemonDetail(slug)
+      if (detail) {
+        const ft = detail.species.flavorText
+        if (ft) {
+          description = ft.length > 220 ? `${ft.slice(0, 220).trim()}…` : ft
+        }
+        ogImage =
+          detail.sprites.official ?? detail.sprites.home ?? detail.sprites.front ?? undefined
+      }
+    }
+    const pageUrl = absoluteUrl(`/pokemon/${encodeURIComponent(slug)}`)
+    const imageForCard = ogImage ?? absoluteUrl('/logo512.png')
+    const disclaimer =
+      'Unofficial reference using public PokéAPI data. Not affiliated with Nintendo, Game Freak, or The Pokémon Company.'
     return {
       meta: [
         { title: `${title} · Pokémon · ${APP_TITLE}` },
+        { name: 'description', content: description },
+        { property: 'og:type', content: 'article' },
+        { property: 'og:title', content: `${title} (Pokémon)` },
+        { property: 'og:description', content: description },
+        { property: 'og:url', content: pageUrl },
+        { property: 'og:image', content: imageForCard },
         {
-          name: 'description',
-          content: `Sprites, types, stats, and Pokédex flavor text for ${title} from the public PokéAPI.`,
+          property: 'og:image:alt',
+          content: ogImage ? `Official-style artwork of ${title}` : `${title} (Pokémon)`,
+        },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: `${title} (Pokémon)` },
+        { name: 'twitter:description', content: description },
+        { name: 'twitter:image', content: imageForCard },
+        {
+          'script:ld+json': {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: `${title} (Pokémon)`,
+            description,
+            url: pageUrl,
+            isPartOf: { '@type': 'WebSite', name: APP_NAME, url: getSiteUrl() },
+            ...(ogImage ? { primaryImageOfPage: { '@type': 'ImageObject', url: ogImage } } : {}),
+            abstract: disclaimer,
+          },
         },
       ],
+      links: [{ rel: 'canonical', href: pageUrl }],
     }
   },
   component: PokemonDetailPage,

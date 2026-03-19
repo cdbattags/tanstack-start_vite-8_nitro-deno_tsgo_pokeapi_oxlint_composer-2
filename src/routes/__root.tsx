@@ -2,7 +2,16 @@ import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import { TrpcProvider } from '../integrations/trpc/react'
-import { APP_DESCRIPTION, APP_TITLE, THEME_COLOR_DARK, THEME_COLOR_LIGHT } from '../site'
+import {
+  APP_DESCRIPTION,
+  APP_NAME,
+  APP_TITLE,
+  SOURCE_REPO_URL,
+  THEME_COLOR_DARK,
+  THEME_COLOR_LIGHT,
+  absoluteUrl,
+  getSiteUrl,
+} from '../site'
 
 import appCss from '../styles.css?url'
 
@@ -30,12 +39,71 @@ export const Route = createRootRoute({
         content: THEME_COLOR_LIGHT,
       },
       {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:site_name',
+        content: APP_NAME,
+      },
+      {
+        property: 'og:url',
+        content: getSiteUrl(),
+      },
+      {
         property: 'og:title',
         content: APP_TITLE,
       },
       {
         property: 'og:description',
         content: APP_DESCRIPTION,
+      },
+      {
+        property: 'og:image',
+        content: absoluteUrl('/logo512.png'),
+      },
+      {
+        property: 'og:image:alt',
+        content: `${APP_NAME} app icon`,
+      },
+      {
+        property: 'og:locale',
+        content: 'en_US',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        name: 'twitter:title',
+        content: APP_TITLE,
+      },
+      {
+        name: 'twitter:description',
+        content: APP_DESCRIPTION,
+      },
+      {
+        name: 'twitter:image',
+        content: absoluteUrl('/logo512.png'),
+      },
+      {
+        'script:ld+json': {
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: APP_NAME,
+          url: getSiteUrl(),
+          sameAs: [SOURCE_REPO_URL],
+        },
+      },
+      {
+        'script:ld+json': {
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: APP_TITLE,
+          url: getSiteUrl(),
+          description: APP_DESCRIPTION,
+          publisher: { '@type': 'Organization', name: APP_NAME, url: getSiteUrl() },
+        },
       },
     ],
     links: [
@@ -46,6 +114,12 @@ export const Route = createRootRoute({
       {
         rel: 'icon',
         href: '/favicon.ico',
+        sizes: 'any',
+      },
+      {
+        rel: 'icon',
+        href: '/favicon.svg',
+        type: 'image/svg+xml',
       },
       {
         rel: 'apple-touch-icon',
