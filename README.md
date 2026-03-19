@@ -12,7 +12,7 @@ Web UI to search the public [PokéAPI](https://pokeapi.co/) v2 list index: one q
 | --- | --- |
 | `pnpm dev` | Local development |
 | `pnpm build` | `vite build` → `.output/server/index.mjs` (`deno_server`) |
-| `pnpm build:deno-deploy` | `deno_deploy` build → Deploy entry `index.ts` |
+| `pnpm build:deno-deploy` | Nitro `deno_deploy` (see root `deno.json` for Deploy) |
 | `pnpm start:deno` | Run built server with Deno |
 | `pnpm test` | Vitest (dedicated `vitest.config.ts`) |
 | `pnpm lint` / `pnpm lint:fix` | Oxlint |

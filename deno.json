@@ -1,0 +1,10 @@
+{
+  "deploy": {
+    "install": "pnpm install --frozen-lockfile",
+    "build": "pnpm run build:deno-deploy",
+    "runtime": {
+      "type": "dynamic",
+      "entrypoint": ".output/server/index.ts"
+    }
+  }
+}

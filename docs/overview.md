@@ -29,43 +29,36 @@ Then run the file Nitro prints after the build (often under `.output/server/`).
 
 ## Deno Deploy
 
-This app targets [Deno Deploy][deno-deploy] using Nitro preset **`deno_deploy`**.
-The build emits **`.output/server/index.ts`** (and chunks) for `deployctl`, not
-`index.mjs`.
+[Deno Deploy][deno-deploy] has two products: **new** ([console.deno.com][deno-console],
+**Apps**) and **Classic** ([dash.deno.com][deno-dash], **Projects**). The
+[deployctl README][deployctl-gh] says **`deployctl` is Classic only**; new
+organizations should use hosted GitHub builds or the **`deno deploy`** CLI.
 
-1. **Build**
+### New Deno Deploy (recommended for this app)
 
-   ```bash
-   pnpm build:deno-deploy
-   ```
+Root **`deno.json`** defines **`deploy.install`**, **`deploy.build`**
+(`pnpm run build:deno-deploy`), and **`deploy.runtime`** (dynamic entrypoint
+**`.output/server/index.ts`**). Link the repo under **Deploy from GitHub** in the
+app; pushes trigger install + build on **Deno’s builders** (see
+[builds][deno-builds]).
 
-2. **CLI upload**  
-   Install [deployctl][deployctl-doc] and create a project on the
-   [Deploy dashboard][deno-dash].
+**`.github/workflows/deno-deploy.yml`** only **checks** the same install + build on
+GitHub-hosted runners. It does **not** call `deployctl` (that would target Classic
+only and fail with permission errors on new Deploy).
 
-   ```bash
-   export DENO_DEPLOY_TOKEN=…   # from Deploy dashboard → Access tokens
-   cd .output
-   deployctl deploy --project=YOUR_PROJECT_NAME server/index.ts
-   ```
+### Deploy Classic only
 
-3. **GitHub Actions** (recommended)  
-   Enable **GitHub Actions** as the deploy source for your Deploy project and link
-   this repository. Workflow: `.github/workflows/deno-deploy.yml`. It runs
-   `pnpm build:deno-deploy`, then `denoland/deployctl@v1` with `root: .output` and
-   `entrypoint: server/index.ts`. Set a repository **Actions variable**
-   **`DENO_DEPLOY_PROJECT`** to your **exact** Deno Deploy project name (same as in
-   the dashboard URL). If unset, the workflow falls back to `tstack-start`.
-
-CI uses **GitHub OIDC** when the repo is linked in Deno (Deploy from GitHub). Do not
-set **`DENO_DEPLOY_TOKEN`** in the workflow; a stale token breaks auth. For local
-`deployctl`, use a token from [access tokens][deno-tokens] and export
-`DENO_DEPLOY_TOKEN`. See [deployctl][deployctl-doc].
+Run **`pnpm build:deno-deploy`**, then use **`deployctl`** against a Classic
+project with [access tokens][deno-tokens] or GitHub OIDC. See
+[deployctl][deployctl-doc].
 
 [deno-deploy]: https://deno.com/deploy
+[deno-console]: https://console.deno.com/
 [deno-dash]: https://dash.deno.com/
+[deno-builds]: https://docs.deno.com/deploy/reference/builds/
 [deno-tokens]: https://dash.deno.com/account#access-tokens
 [deployctl-doc]: https://deno.com/deploy/docs/deployctl
+[deployctl-gh]: https://github.com/denoland/deployctl#readme
 
 # Typechecking
 

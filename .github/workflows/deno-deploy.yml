@@ -1,22 +1,28 @@
-name: Deno Deploy
+name: Verify Deno Deploy build
+
+# `denoland/deployctl` only targets Deno Deploy Classic (dash.deno.com). New Deno
+# Deploy (console.deno.com, "Apps") builds from the linked GitHub repo using the
+# `deploy` section in deno.json at the repo root. This workflow mirrors that
+# install + build on GitHub runners so CI fails before a broken commit hits Deno.
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 concurrency:
-  group: deno-deploy-${{ github.ref }}
+  group: deno-build-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      # deployctl uses GitHub OIDC with Deno Deploy when the repo is linked
-      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -32,14 +38,3 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm run build:deno-deploy
-
-      - name: Deploy to Deno Deploy
-        uses: denoland/deployctl@v1
-        with:
-          # Set repo variable DENO_DEPLOY_PROJECT to the exact project name in
-          # https://dash.deno.com/ (Settings → project name, or URL path).
-          project: ${{ vars.DENO_DEPLOY_PROJECT || 'tstack-start' }}
-          entrypoint: server/index.ts
-          root: .output
-        # Do not set DENO_DEPLOY_TOKEN here: a bad secret overrides OIDC. With the repo
-        # linked under Deploy from GitHub, deployctl authenticates via GitHub OIDC only.
