@@ -36,10 +36,12 @@ jobs:
       - name: Deploy to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          # Must match the project name (or id) in https://dash.deno.com/
-          project: tstack-start
+          # Set repo variable DENO_DEPLOY_PROJECT to the exact project name in
+          # https://dash.deno.com/ (Settings → project name, or URL path).
+          project: ${{ vars.DENO_DEPLOY_PROJECT || 'tstack-start' }}
           entrypoint: server/index.ts
           root: .output
         env:
-          # Optional: set repo secret DENO_DEPLOY_TOKEN if deployctl auth fails without it
+          # Optional: remove this secret if you use GitHub-linked OIDC only; a stale
+          # token can make deployctl fail before OIDC succeeds.
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}

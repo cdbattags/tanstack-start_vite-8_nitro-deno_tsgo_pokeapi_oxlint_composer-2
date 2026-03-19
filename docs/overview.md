@@ -50,11 +50,12 @@ The build emits **`.output/server/index.ts`** (and chunks) for `deployctl`, not
    ```
 
 3. **GitHub Actions** (recommended)  
-   Enable **GitHub Actions** as the deploy source for your Deploy project and link this
-   repository. Workflow: `.github/workflows/deno-deploy.yml`. It runs
+   Enable **GitHub Actions** as the deploy source for your Deploy project and link
+   this repository. Workflow: `.github/workflows/deno-deploy.yml`. It runs
    `pnpm build:deno-deploy`, then `denoland/deployctl@v1` with `root: .output` and
-   `entrypoint: server/index.ts`. Edit the workflow `project` input to match your
-   Deploy project name.
+   `entrypoint: server/index.ts`. Set a repository **Actions variable**
+   **`DENO_DEPLOY_PROJECT`** to your **exact** Deno Deploy project name (same as in
+   the dashboard URL). If unset, the workflow falls back to `tstack-start`.
 
 If the action fails with auth errors, add a **`DENO_DEPLOY_TOKEN`** repository secret.
 See [deployctl CI][deployctl-doc].
