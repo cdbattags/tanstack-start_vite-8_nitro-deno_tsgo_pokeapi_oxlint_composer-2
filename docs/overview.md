@@ -57,11 +57,14 @@ The build emits **`.output/server/index.ts`** (and chunks) for `deployctl`, not
    **`DENO_DEPLOY_PROJECT`** to your **exact** Deno Deploy project name (same as in
    the dashboard URL). If unset, the workflow falls back to `tstack-start`.
 
-If the action fails with auth errors, add a **`DENO_DEPLOY_TOKEN`** repository secret.
-See [deployctl CI][deployctl-doc].
+CI uses **GitHub OIDC** when the repo is linked in Deno (Deploy from GitHub). Do not
+set **`DENO_DEPLOY_TOKEN`** in the workflow; a stale token breaks auth. For local
+`deployctl`, use a token from [access tokens][deno-tokens] and export
+`DENO_DEPLOY_TOKEN`. See [deployctl][deployctl-doc].
 
 [deno-deploy]: https://deno.com/deploy
 [deno-dash]: https://dash.deno.com/
+[deno-tokens]: https://dash.deno.com/account#access-tokens
 [deployctl-doc]: https://deno.com/deploy/docs/deployctl
 
 # Typechecking

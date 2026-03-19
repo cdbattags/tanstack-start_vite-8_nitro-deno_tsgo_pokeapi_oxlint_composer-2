@@ -41,7 +41,5 @@ jobs:
           project: ${{ vars.DENO_DEPLOY_PROJECT || 'tstack-start' }}
           entrypoint: server/index.ts
           root: .output
-        env:
-          # Optional: remove this secret if you use GitHub-linked OIDC only; a stale
-          # token can make deployctl fail before OIDC succeeds.
-          DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
+        # Do not set DENO_DEPLOY_TOKEN here: a bad secret overrides OIDC. With the repo
+        # linked under Deploy from GitHub, deployctl authenticates via GitHub OIDC only.
