@@ -1,0 +1,63 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "oxc",
+    "react",
+    "import",
+    "promise",
+    "vitest"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "env": {
+    "builtin": true,
+    "browser": true
+  },
+  "ignorePatterns": [
+    "node_modules",
+    ".output",
+    "dist",
+    "**/*.gen.ts",
+    "src/routeTree.gen.ts"
+  ],
+  "settings": {
+    "react": {
+      "version": "19.2"
+    },
+    "vitest": {
+      "typecheck": false
+    }
+  },
+  "options": {
+    "typeAware": true,
+    "reportUnusedDisableDirectives": "warn"
+  },
+  "rules": {
+    "eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "unicorn/prevent-abbreviations": "off",
+    "unicorn/filename-case": "off",
+    "import/no-default-export": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "off"
+  },
+  "overrides": [
+    {
+      "files": ["routes/**/*.ts", "routes/**/*.tsx"],
+      "env": {
+        "node": true
+      }
+    }
+  ]
+}
